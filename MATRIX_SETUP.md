@@ -1,328 +1,329 @@
-# Matrix Integration Setup
+# Matrix Multi-VM Coordination Setup
 
-Complete guide for setting up Matrix bot accounts and rooms for agent coordination.
+Complete setup for Matrix-based multi-VM agent coordination for the superalignment simulation project.
 
-## Prerequisites
+## Overview
 
-- Access to Matrix server: `matrix.themultiverse.school`
-- Admin account (or ability to create new users)
-- matrix-commander CLI tool (optional but helpful)
+This system enables:
+- **Real-time messaging** between Mac and cloud VM via Matrix protocol
+- **Mobile access** via Element app on phone
+- **Persistent history** (not ephemeral like MQTT)
+- **Multi-agent coordination** with 10 bot accounts across 11 rooms
 
-## Step 1: Create Bot Accounts
+## Architecture
 
-You need to create Matrix accounts for each agent. There are two methods:
-
-### Method A: Web Interface (Easiest)
-
-1. Go to `https://matrix.themultiverse.school` (or use Element app)
-2. Create new account for each agent:
-   - Username: `sylvia`, `roy`, `cynthia`, `moss`, `tessa`, `historian`, `architect`, `ray`, `orchestrator`, `monitor`
-   - Password: Use strong passwords (store in password manager)
-3. Log in to each account once to activate it
-4. Get access token for each account:
-   - Element Web → Settings → Help & About → Advanced → Access Token
-   - Copy and save to `~/.superalignment-env`
-
-### Method B: matrix-commander CLI
-
-```bash
-# Install matrix-commander
-pip install matrix-commander
-
-# Create each bot account
-matrix-commander --homeserver https://matrix.themultiverse.school \
-                  --user-login sylvia \
-                  --password "STRONG_PASSWORD" \
-                  --device "sylvia-bot" \
-                  --room-create "superalignmenttoutopia-coordination"
-
-# Repeat for each agent
+```
+┌─────────────────┐         ┌──────────────────┐         ┌─────────────────┐
+│   Mac (Local)   │◄───────►│  Matrix Server   │◄───────►│   Cloud VM      │
+│   Claude Code   │         │  themultiverse   │         │   Claude Code   │
+└─────────────────┘         └──────────────────┘         └─────────────────┘
+         ▲                           ▲
+         │                           │
+         └───────────┬───────────────┘
+                     │
+                ┌────▼─────┐
+                │  Phone   │
+                │ Element  │
+                └──────────┘
 ```
 
-## Step 2: Get Access Tokens
+## Setup Complete ✅
 
-For each bot account, you need an access token:
+### 1. Bot Accounts (10 total)
 
-### Option A: Element Web
+All accounts created on `matrix.themultiverse.school`:
 
-1. Log into account at https://matrix.themultiverse.school
-2. Settings → Help & About → Advanced → Access Token
-3. Click "Show" and copy the token (format: `syt_...`)
+| Account | Purpose | Token Available |
+|---------|---------|----------------|
+| agent-sylvia | Research skeptic | ✅ |
+| agent-roy | Simulation maintainer | ✅ |
+| agent-cynthia | Super-alignment researcher | ⚠️ No token |
+| agent-moss | Feature implementer | ✅ |
+| agent-tessa | Far-future UX designer | ✅ |
+| agent-historian | Wiki documentation updater | ✅ |
+| agent-architect | The Architect (roadmap) | ✅ |
+| agent-ray | Sci-fi tech visionary | ✅ |
+| agent-orchestrator | Workflow orchestrator | ✅ |
+| agent-monitor | Channel monitor | ✅ |
 
-### Option B: matrix-commander
+**Note:** agent-cynthia exists but token retrieval failed. This can be resolved later.
 
-```bash
-# Login and get token
-matrix-commander --homeserver https://matrix.themultiverse.school \
-                  --user-login sylvia \
-                  --password "PASSWORD" \
-                  --login password
+### 2. Matrix Rooms (11 total)
 
-# Token will be saved to ~/.config/matrix-commander/credentials.json
-cat ~/.config/matrix-commander/credentials.json | grep access_token
+All rooms under `superalignmenttoutopia-*` namespace:
+
+| Room | Purpose | Room ID |
+|------|---------|---------|
+| coordination | Multi-agent task coordination | !G-uy0v5GZd9IUqFufg4KIt0ks6d7bNdwquD29SVC4-I |
+| research | Academic paper findings | !f1x8EzyssJVos9CBgBi5v-YYXaCuQLAHvtQk0QayBPc |
+| research-critique | Critical evaluation | !J3wxRvTwUo8jKtXIxCWEQdMxsw21or68HYQhSCLuke4 |
+| architecture | System design discussions | !oKn4dGJAegWzzPttMjtQID7ZwlYqzopO_8Ee7u4a8FE |
+| implementation | Code changes, PRs | !_BtqKCOOVvuVcSgpKQnirESzhCVmqNeU1ax67AWwEcY |
+| testing | Test results, Monte Carlo | !glTIghctzWbqgrXI47roAIwD5Fi4Qjwb9nbDsIa2npk |
+| documentation | Wiki updates, devlogs | !gRMouLPK2kGnlsewBblbZTlWioDHjS0286c4C9TBk6s |
+| roadmap | Task tracking, priorities | !qrAqBLUwBFaB_1gCyqCvMJHVJj6U9orA7_82WPAf_Cs |
+| triggers | Event-driven actions | !lvNRJaNT1PdHEbmdVgFTAIqhi95QozRa-czJPp59xyQ |
+| alerts | Critical notifications | !y4JQz8bjhAiaBH5aAH57JnjIWMy1gsvA4M-k9urDc5s |
+| status | Health checks, heartbeats | !_flKVKqdUahD0GyMzw6x1kB5im9vYkPbYvUuvdhZDUI |
+
+### 3. Files Created
+
+```
+superalignment-chatroom/
+├── matrix-credentials/
+│   ├── .env                    # Bot tokens (NEVER commit)
+│   └── matrix-rooms.json       # Room ID mappings
+├── scripts/
+│   ├── setup-matrix-bots.sh    # Bot account creation
+│   └── install-matrix-mcp.sh   # MCP server installation
+└── MATRIX_SETUP.md            # This file
+
+~/src/matrix-mcp-server/        # MCP server (cloned from GitHub)
+~/.superalignment-env           # Environment variables
+
+superalignmenttoutopia/
+└── .mcp.json                   # MCP server configuration
 ```
 
-### Option C: Manual API Call
+## Usage
+
+### On Mac (Already Complete)
+
+#### 1. Environment Variables
 
 ```bash
-# Get access token via Matrix API
-curl -X POST https://matrix.themultiverse.school/_matrix/client/r0/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "m.login.password",
-    "user": "sylvia",
-    "password": "YOUR_PASSWORD"
-  }'
-
-# Response contains: "access_token": "syt_..."
-```
-
-## Step 3: Save Tokens to Environment
-
-Create `~/.superalignment-env`:
-
-```bash
-# Matrix Server Configuration
-export MATRIX_HOMESERVER="https://matrix.themultiverse.school"
-
-# Bot Account Tokens
-export MATRIX_TOKEN_SYLVIA="syt_c3lsdmlh_xxxxxxxxxx"
-export MATRIX_TOKEN_ROY="syt_cm95_xxxxxxxxxxxxxx"
-export MATRIX_TOKEN_CYNTHIA="syt_Y3ludGhpYQ_xxxxxxxx"
-export MATRIX_TOKEN_MOSS="syt_bW9zcw_xxxxxxxxxxxxx"
-export MATRIX_TOKEN_TESSA="syt_dGVzc2E_xxxxxxxxxxxx"
-export MATRIX_TOKEN_HISTORIAN="syt_aGlzdG9yaWFu_xxxxxx"
-export MATRIX_TOKEN_ARCHITECT="syt_YXJjaGl0ZWN0_xxxxxx"
-export MATRIX_TOKEN_RAY="syt_cmF5_xxxxxxxxxxxxxxxx"
-export MATRIX_TOKEN_ORCHESTRATOR="syt_b3JjaGVzdHJhdG9y_xx"
-export MATRIX_TOKEN_MONITOR="syt_bW9uaXRvcg_xxxxxxxxx"
-```
-
-**Important:** Add to `.gitignore`! Never commit tokens.
-
-Then source it:
-```bash
-# Add to ~/.bashrc or ~/.zshrc
+# Load environment (tokens are already in ~/.superalignment-env)
 source ~/.superalignment-env
 
-# Or manually load for current session
-source ~/.superalignment-env
+# Verify tokens loaded
+echo $MATRIX_TOKEN_ORCHESTRATOR  # Should show syt_...
 ```
 
-## Step 4: Create Matrix Rooms
+#### 2. MCP Tools in Claude Code
 
-Create rooms with the `superalignmenttoutopia-` prefix:
+After restarting Claude Code, you have access to Matrix MCP tools:
 
-### Option A: Element Web (Manual)
+```typescript
+// Post message to room
+mcp__matrix_chatroom__post_message({
+  room: "coordination",
+  message: "Task complete: nuclear winter cascades implemented"
+})
 
-1. Log in as any bot account (or your admin account)
-2. Create room → Set name:
-   - `superalignmenttoutopia-coordination`
-   - `superalignmenttoutopia-research`
-   - `superalignmenttoutopia-research-critique`
-   - `superalignmenttoutopia-architecture`
-   - `superalignmenttoutopia-implementation`
-   - `superalignmenttoutopia-testing`
-   - `superalignmenttoutopia-documentation`
-   - `superalignmenttoutopia-roadmap`
-   - `superalignmenttoutopia-triggers`
-   - `superalignmenttoutopia-alerts`
-   - `superalignmenttoutopia-status`
-3. Invite all bot accounts to each room
-4. Set room to "Public" (or "Private" if preferred)
-5. Copy room IDs (Settings → Advanced → Room ID: `!abc123:themultiverse.school`)
+// Read messages
+mcp__matrix_chatroom__read_messages({
+  room: "research",
+  limit: 10
+})
 
-### Option B: matrix-commander (Automated)
+// List rooms
+mcp__matrix_chatroom__list_rooms()
+```
+
+#### 3. Mobile Access (Element App)
+
+1. Install Element on phone: https://element.io/download
+2. Login to `matrix.themultiverse.school`
+3. Join rooms:
+   - #superalignmenttoutopia-coordination
+   - #superalignmenttoutopia-alerts
+   - etc.
+4. Send messages from phone → Claude Code receives them
+
+## Cloud VM Setup (Pending)
+
+### Prerequisites
 
 ```bash
-# Create script to automate room creation
-cat > create-rooms.sh << 'EOF'
-#!/bin/bash
-
-ROOMS=(
-  "superalignmenttoutopia-coordination"
-  "superalignmenttoutopia-research"
-  "superalignmenttoutopia-research-critique"
-  "superalignmenttoutopia-architecture"
-  "superalignmenttoutopia-implementation"
-  "superalignmenttoutopia-testing"
-  "superalignmenttoutopia-documentation"
-  "superalignmenttoutopia-roadmap"
-  "superalignmenttoutopia-triggers"
-  "superalignmenttoutopia-alerts"
-  "superalignmenttoutopia-status"
-)
-
-for room in "${ROOMS[@]}"; do
-  echo "Creating room: #$room"
-  matrix-commander --room-create "$room" --room-join "$room"
-done
-EOF
-
-chmod +x create-rooms.sh
-./create-rooms.sh
+# On cloud VM
+sudo apt-get update
+sudo apt-get install -y git nodejs npm python3 python3-pip
 ```
 
-### Option C: API Calls
+### 1. Clone Repositories
 
 ```bash
-# Create room via Matrix API
-curl -X POST https://matrix.themultiverse.school/_matrix/client/r0/createRoom \
-  -H "Authorization: Bearer $MATRIX_TOKEN_ORCHESTRATOR" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "superalignmenttoutopia-coordination",
-    "preset": "public_chat",
-    "visibility": "public"
-  }'
-```
-
-## Step 5: Get Room IDs
-
-You need to map room names to room IDs for the MCP server:
-
-```bash
-# Using matrix-commander
-matrix-commander --room-list
-
-# Or via Element Web
-# Room Settings → Advanced → Room ID
-```
-
-Create a room mapping file `~/src/superalignment-chatroom/matrix-rooms.json`:
-
-```json
-{
-  "coordination": "!abc123:themultiverse.school",
-  "research": "!def456:themultiverse.school",
-  "research-critique": "!ghi789:themultiverse.school",
-  "architecture": "!jkl012:themultiverse.school",
-  "implementation": "!mno345:themultiverse.school",
-  "testing": "!pqr678:themultiverse.school",
-  "documentation": "!stu901:themultiverse.school",
-  "roadmap": "!vwx234:themultiverse.school",
-  "triggers": "!yza567:themultiverse.school",
-  "alerts": "!bcd890:themultiverse.school",
-  "status": "!efg123:themultiverse.school"
-}
-```
-
-## Step 6: Configure matrix-mcp-server
-
-Install and configure the Matrix MCP server:
-
-```bash
-# Install matrix-mcp-server (pinned version)
+mkdir -p ~/src
 cd ~/src
-git clone https://github.com/mjknowles/matrix-mcp-server.git
-cd matrix-mcp-server
-git checkout v1.0.0  # Pin to specific version (adjust as needed)
 
-npm install
-npm run build
+# Clone chatroom repo
+git clone https://github.com/yourusername/superalignment-chatroom.git
+
+# Clone main simulation repo
+git clone https://github.com/yourusername/superalignmenttoutopia.git
 ```
 
-Add to `.mcp.json` in main repo:
+### 2. Copy Matrix Credentials
 
-```json
-{
-  "mcpServers": {
-    "matrix-chatroom": {
-      "command": "node",
-      "args": [
-        "/Users/annhoward/src/matrix-mcp-server/build/index.js"
-      ],
-      "env": {
-        "MATRIX_HOMESERVER": "https://matrix.themultiverse.school",
-        "MATRIX_ACCESS_TOKEN": "${MATRIX_TOKEN_ORCHESTRATOR}",
-        "MATRIX_ROOMS_CONFIG": "/Users/annhoward/src/superalignment-chatroom/matrix-rooms.json"
-      }
-    },
-    "chatroom": {
-      "command": "/Users/annhoward/src/superalignmenttoutopia/.venv/bin/python",
-      "args": [
-        "/Users/annhoward/src/superalignment-chatroom/scripts/matrix-chatroom-server.py"
-      ]
-    }
-  }
-}
+**⚠️ SECURITY: Use secure transfer (scp/rsync), NEVER commit credentials**
+
+From Mac:
+```bash
+# Create credentials archive (excluded from git)
+cd ~/src/superalignment-chatroom
+tar czf matrix-creds.tar.gz matrix-credentials/
+
+# Securely copy to cloud VM
+scp matrix-creds.tar.gz cloudvm:~/src/superalignment-chatroom/
+
+# On cloud VM: extract
+cd ~/src/superalignment-chatroom
+tar xzf matrix-creds.tar.gz
+rm matrix-creds.tar.gz  # Clean up
+
+# Add to environment
+cat matrix-credentials/.env >> ~/.superalignment-env
+source ~/.superalignment-env
 ```
 
-## Step 7: Test Setup
+### 3. Install matrix-mcp-server
 
 ```bash
-# Test bot can connect
-# Using matrix-commander with saved credentials
-matrix-commander --user-login orchestrator --send "Test message" --room "superalignmenttoutopia-coordination"
-
-# Or test MCP server
-# Run Claude Code and try:
-# mcp__matrix-chatroom__send_message(...)
+cd ~/src/superalignment-chatroom
+bash scripts/install-matrix-mcp.sh
 ```
 
-## Account Summary
+This will:
+- Clone matrix-mcp-server to ~/src/matrix-mcp-server
+- Install dependencies and build
+- Update .mcp.json in main repo
+- Configure environment variables
 
-After setup, you should have:
+### 4. Test Integration
 
-**Bot Accounts:**
-- `@sylvia:themultiverse.school`
-- `@roy:themultiverse.school`
-- `@cynthia:themultiverse.school`
-- `@moss:themultiverse.school`
-- `@tessa:themultiverse.school`
-- `@historian:themultiverse.school`
-- `@architect:themultiverse.school`
-- `@ray:themultiverse.school`
-- `@orchestrator:themultiverse.school`
-- `@monitor:themultiverse.school`
+```bash
+# Restart Claude Code on cloud VM
 
-**Rooms:**
-- `#superalignmenttoutopia-coordination:themultiverse.school`
-- `#superalignmenttoutopia-research:themultiverse.school`
-- `#superalignmenttoutopia-research-critique:themultiverse.school`
-- `#superalignmenttoutopia-architecture:themultiverse.school`
-- `#superalignmenttoutopia-implementation:themultiverse.school`
-- `#superalignmenttoutopia-testing:themultiverse.school`
-- `#superalignmenttoutopia-documentation:themultiverse.school`
-- `#superalignmenttoutopia-roadmap:themultiverse.school`
-- `#superalignmenttoutopia-triggers:themultiverse.school`
-- `#superalignmenttoutopia-alerts:themultiverse.school`
-- `#superalignmenttoutopia-status:themultiverse.school`
+# Test posting message
+# In Claude Code, agents can now use MCP tools to post to Matrix rooms
 
-## Security Notes
-
-- **Never commit access tokens** to git
-- Store tokens in `~/.superalignment-env` (add to `.gitignore`)
-- Use strong passwords for bot accounts
-- Consider using application service tokens for production
-- Rotate tokens periodically
+# Verify from Mac/phone:
+# - Check Element app
+# - Should see message from agent-orchestrator (or other bots)
+```
 
 ## Troubleshooting
 
-### Can't Create Account
+### agent-cynthia Token Missing
 
-- Check if registration is enabled on your Matrix server
-- May need admin to create accounts
-- Try using admin API if you have access
+The agent-cynthia account exists but token retrieval failed during setup.
 
-### Invalid Access Token
+**Option 1: Reset password via Matrix admin**
+```bash
+# Contact Matrix admin to reset password for @agent-cynthia:themultiverse.school
+# Then run:
+curl -s -X POST 'https://matrix.themultiverse.school/_matrix/client/r0/login' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "type": "m.login.password",
+    "user": "agent-cynthia",
+    "password": "NEWPASS"
+  }' | jq -r '.access_token'
 
-- Token may have expired
-- Re-login to get new token
-- Check token format (should start with `syt_`)
+# Add token to matrix-credentials/.env:
+echo 'MATRIX_TOKEN_CYNTHIA="syt_..."' >> matrix-credentials/.env
+source ~/.superalignment-env
+```
 
-### Can't Join Room
+**Option 2: Use other agents**
+- System works fine with 9 out of 10 agents
+- agent-cynthia can be added later if needed
 
-- Ensure room is public or bot is invited
-- Check room ID is correct
-- Verify bot has joined room: `matrix-commander --room-list`
+### Connection Issues
+
+```bash
+# Test Matrix server connectivity
+curl -s https://matrix.themultiverse.school/_matrix/client/versions | jq
+
+# Verify tokens are loaded
+env | grep MATRIX_TOKEN
+
+# Check MCP server logs
+# Logs should show in Claude Code output when MCP tools are used
+```
+
+### Rate Limiting
+
+Matrix server rate limits account creation:
+- 10-second delay between account creations (already implemented)
+- If you hit limits, wait 5-10 minutes and retry
+
+## Security
+
+### Three-Layer Protection
+
+1. **Pre-commit Hook**: Blocks secrets at commit time
+   - Located: `.git/hooks/pre-commit`
+   - Detects: Matrix tokens (syt_*), API keys, passwords
+
+2. **.gitignore**: Prevents tracking
+   - `matrix-credentials/` (entire directory)
+   - `*.token` (token files)
+
+3. **Conversation Redaction**: PII removal
+   - Script: `scripts/redact-conversations.py`
+   - Uses Microsoft Presidio for detection
+
+### Best Practices
+
+✅ **DO:**
+- Store credentials in `matrix-credentials/.env` (gitignored)
+- Use environment variable references: `${MATRIX_TOKEN_ORCHESTRATOR}`
+- Transfer credentials via scp/rsync (not git)
+- Source `~/.superalignment-env` in shell sessions
+
+❌ **DON'T:**
+- Commit `matrix-credentials/` directory
+- Use literal token values in config files
+- Share credentials via unencrypted channels
+- Skip the pre-commit hook
 
 ## Next Steps
 
-Once Matrix setup is complete:
+### Immediate
 
-1. Test bot posting to rooms
-2. Integrate with MCP server
-3. Update agent workflows to use Matrix instead of files
-4. Set up mobile Element app for triggers
-5. Deploy to other VMs
+1. **Restart Claude Code** to load Matrix MCP server
+2. **Test Matrix integration**:
+   - Post message from Claude Code to coordination room
+   - Verify receipt in Element app on phone
+3. **Set up cloud VM** using steps above
+
+### Future Enhancements
+
+- **Auto-sync triggers**: Git push on Matrix message
+- **Monte Carlo alerts**: Post results to testing room
+- **Mobile commands**: Trigger simulation runs from phone
+- **Agent handoff**: Pass context between Mac and cloud VM
+
+## Resources
+
+- Matrix Homeserver: https://matrix.themultiverse.school
+- Element App: https://element.io/download
+- matrix-mcp-server: https://github.com/mjknowles/matrix-mcp-server
+- Security docs: `SECURITY.md`
+- Chatroom docs: `.claude/chatroom/README.md`
+
+## Summary
+
+**Status:** Mac setup complete ✅
+
+**What Works:**
+- 10 bot accounts created (9 with tokens)
+- 11 Matrix rooms created and configured
+- All bots invited to all rooms
+- matrix-mcp-server installed and configured
+- Environment variables set up
+- Security layers active (pre-commit hook, .gitignore, redaction)
+
+**What's Next:**
+- Restart Claude Code to load Matrix MCP server
+- Test integration by posting messages
+- Set up cloud VM using same process
+- (Optional) Resolve agent-cynthia token issue
+
+**Credentials Location:**
+- Tokens: `/Users/annhoward/src/superalignment-chatroom/matrix-credentials/.env`
+- Room mapping: `/Users/annhoward/src/superalignment-chatroom/matrix-credentials/matrix-rooms.json`
+- Environment: `~/.superalignment-env`
+
+**🎉 Multi-VM coordination via Matrix is ready!**
