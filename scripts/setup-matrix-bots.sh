@@ -32,16 +32,16 @@ echo -e "${BLUE}=== Matrix Bot Setup ===${NC}"
 echo "This script will create bot accounts and rooms on $HOMESERVER"
 echo ""
 
-# Check if uv is installed
-if ! command -v uv &> /dev/null; then
-    echo -e "${YELLOW}Installing uv...${NC}"
-    brew install uv
+# Check if jq is installed (for JSON parsing)
+if ! command -v jq &> /dev/null; then
+    echo -e "${YELLOW}Installing jq...${NC}"
+    brew install jq
 fi
 
-# Check if matrix-commander is installed
-if ! command -v matrix-commander &> /dev/null; then
-    echo -e "${YELLOW}Installing matrix-commander...${NC}"
-    uv tool install matrix-commander
+# Check if curl is installed (should be built-in on macOS)
+if ! command -v curl &> /dev/null; then
+    echo -e "${RED}❌ curl not found - required for Matrix API calls${NC}"
+    exit 1
 fi
 
 # Create output directory for credentials
