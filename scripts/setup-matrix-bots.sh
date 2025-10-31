@@ -86,6 +86,12 @@ declare -A TOKENS
 for agent in "${AGENTS[@]}"; do
     echo -e "${YELLOW}Creating account: @${agent}:themultiverse.school${NC}"
 
+    # Rate limiting: wait 10 seconds between account creations
+    if [ "$agent" != "agent-sylvia" ]; then
+        echo "  Waiting 10 seconds (rate limit)..."
+        sleep 10
+    fi
+
     # Step 1: Start UIA flow (get session)
     INIT_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
         -H "Content-Type: application/json" \
