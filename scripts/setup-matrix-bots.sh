@@ -63,10 +63,21 @@ mkdir -p "$CREDS_DIR"
 echo -e "${BLUE}=== Step 1: Creating Bot Accounts ===${NC}"
 echo ""
 
-# Prompt for password and registration token
-read -sp "Enter password for all bot accounts: " BOT_PASSWORD
-echo ""
-read -p "Enter registration token (if required, or press Enter to skip): " REGISTRATION_TOKEN
+# Accept password and token via CLI args or prompt
+if [ -n "$1" ]; then
+    BOT_PASSWORD="$1"
+    echo "Using password from command line argument"
+else
+    read -sp "Enter password for all bot accounts: " BOT_PASSWORD
+    echo ""
+fi
+
+if [ -n "$2" ]; then
+    REGISTRATION_TOKEN="$2"
+    echo "Using registration token from command line argument"
+else
+    read -p "Enter registration token (if required, or press Enter to skip): " REGISTRATION_TOKEN
+fi
 echo ""
 
 # Store tokens in associative array
