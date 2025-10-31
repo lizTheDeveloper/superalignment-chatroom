@@ -8,6 +8,9 @@
 *.tmp
 *.log
 
+# Logs directory (archived to GCS daily)
+logs/
+
 # Python
 __pycache__/
 *.py[cod]
