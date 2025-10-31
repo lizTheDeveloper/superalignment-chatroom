@@ -143,8 +143,9 @@ for agent in "${AGENTS[@]}"; do
         TOKENS[$agent]=$TOKEN
         echo -e "${GREEN}✓ Created @${agent}:themultiverse.school${NC}"
     else
-        # Account might already exist, try to login
-        echo -e "${YELLOW}  Account may exist, trying to login...${NC}"
+        # Show registration error
+        echo -e "${YELLOW}  Registration failed: $(echo "$REGISTER_RESPONSE" | jq -r '.error // .errcode')${NC}"
+        echo -e "${YELLOW}  Trying to login...${NC}"
 
         LOGIN_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/login" \
             -H "Content-Type: application/json" \
