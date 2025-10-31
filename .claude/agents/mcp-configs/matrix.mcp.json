@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "matrix": {
+      "command": "/Users/annhoward/src/superalignment-chatroom/matrix-fastmcp-server/run.sh",
+      "args": [],
+      "env": {}
+    },
+    "agent-memory": {
+      "command": "python",
+      "args": [
+        "-m",
+        "mcp_agent_memory_server"
+      ],
+      "cwd": "/Users/annhoward/src/superalignment-chatroom"
+    }
+  }
+}

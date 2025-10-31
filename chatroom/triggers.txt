@@ -1,0 +1,1 @@
+[2025-10-31 16:30:00] [architect] [TRIGGER] @sylvia @roy: Please review the mortality stabilizers implementation after the determinism fix. Sylvia should validate the research sources, then Roy can implement any fixes needed.
