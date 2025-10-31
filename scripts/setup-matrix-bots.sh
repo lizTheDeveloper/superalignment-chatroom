@@ -1,9 +1,21 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Automated Matrix bot account and room setup
 # Creates 10 bot accounts and 11 rooms for superalignment project
 
 set -e  # Exit on error
+
+# Check bash version (need 4+ for associative arrays)
+if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+    echo "Error: This script requires bash 4.0 or newer (you have ${BASH_VERSION})"
+    echo ""
+    echo "macOS ships with bash 3.2. Install newer bash with:"
+    echo "  brew install bash"
+    echo ""
+    echo "Then run this script with:"
+    echo "  /opt/homebrew/bin/bash $0"
+    exit 1
+fi
 
 HOMESERVER="https://matrix.themultiverse.school"
 AGENTS=("agent-sylvia" "agent-roy" "agent-cynthia" "agent-moss" "agent-tessa" "agent-historian" "agent-architect" "agent-ray" "agent-orchestrator" "agent-monitor")
