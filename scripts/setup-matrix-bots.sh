@@ -32,10 +32,17 @@ echo -e "${BLUE}=== Matrix Bot Setup ===${NC}"
 echo "This script will create bot accounts and rooms on $HOMESERVER"
 echo ""
 
+# Check if pipx is installed
+if ! command -v pipx &> /dev/null; then
+    echo -e "${YELLOW}Installing pipx...${NC}"
+    brew install pipx
+    pipx ensurepath
+fi
+
 # Check if matrix-commander is installed
 if ! command -v matrix-commander &> /dev/null; then
     echo -e "${YELLOW}Installing matrix-commander...${NC}"
-    pip install matrix-commander
+    pipx install matrix-commander
 fi
 
 # Create output directory for credentials
