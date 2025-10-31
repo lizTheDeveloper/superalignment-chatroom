@@ -19,7 +19,25 @@ from datetime import datetime
 CHATROOM_DIR = Path(__file__).parent.parent / "chatroom"
 TRIGGERS_FILE = CHATROOM_DIR / "triggers.txt"
 STATE_FILE = Path(__file__).parent.parent / "matrix-credentials" / "trigger-state.json"
-PROJECT_DIR = Path("/Users/annhoward/src/superalignmenttoutopia")
+
+# Auto-detect project directory (works on Mac and Linux)
+def find_project_dir():
+    """Find superalignmenttoutopia project directory."""
+    # Check common locations
+    candidates = [
+        Path("/Users/annhoward/src/superalignmenttoutopia"),  # Mac
+        Path.home() / "src" / "superalignmenttoutopia",  # Generic
+        Path("/home") / Path.home().name / "src" / "superalignmenttoutopia",  # Linux
+    ]
+
+    for path in candidates:
+        if path.exists() and (path / "src" / "simulation").exists():
+            return path
+
+    # Fallback to home/src/superalignmenttoutopia
+    return Path.home() / "src" / "superalignmenttoutopia"
+
+PROJECT_DIR = find_project_dir()
 
 # Auto-detect Claude binary (works on Mac and Linux)
 def find_claude_bin():
