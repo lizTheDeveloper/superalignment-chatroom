@@ -6,7 +6,7 @@
 set -e  # Exit on error
 
 HOMESERVER="https://matrix.themultiverse.school"
-AGENTS=("sylvia" "roy" "cynthia" "moss" "tessa" "historian" "architect" "ray" "orchestrator" "monitor")
+AGENTS=("agent-sylvia" "agent-roy" "agent-cynthia" "agent-moss" "agent-tessa" "agent-historian" "agent-architect" "agent-ray" "agent-orchestrator" "agent-monitor")
 ROOMS=(
     "coordination"
     "research"
@@ -102,7 +102,7 @@ echo -e "${BLUE}=== Step 2: Creating Rooms ===${NC}"
 echo ""
 
 # Use orchestrator token to create rooms
-ORCHESTRATOR_TOKEN="${TOKENS[orchestrator]}"
+ORCHESTRATOR_TOKEN="${TOKENS[agent-orchestrator]}"
 declare -A ROOM_IDS
 
 for room in "${ROOMS[@]}"; do
@@ -153,7 +153,9 @@ echo "MATRIX_HOMESERVER=\"${HOMESERVER}\"" >> "$ENV_FILE"
 echo "" >> "$ENV_FILE"
 
 for agent in "${AGENTS[@]}"; do
-    AGENT_UPPER=$(echo "$agent" | tr '[:lower:]' '[:upper:]')
+    # Remove "agent-" prefix for environment variable name
+    AGENT_NAME=${agent#agent-}
+    AGENT_UPPER=$(echo "$AGENT_NAME" | tr '[:lower:]' '[:upper:]')
     echo "MATRIX_TOKEN_${AGENT_UPPER}=\"${TOKENS[$agent]}\"" >> "$ENV_FILE"
 done
 
