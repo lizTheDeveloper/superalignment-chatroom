@@ -32,17 +32,16 @@ echo -e "${BLUE}=== Matrix Bot Setup ===${NC}"
 echo "This script will create bot accounts and rooms on $HOMESERVER"
 echo ""
 
-# Check if pipx is installed
-if ! command -v pipx &> /dev/null; then
-    echo -e "${YELLOW}Installing pipx...${NC}"
-    brew install pipx
-    pipx ensurepath
+# Check if uv is installed
+if ! command -v uv &> /dev/null; then
+    echo -e "${YELLOW}Installing uv...${NC}"
+    brew install uv
 fi
 
 # Check if matrix-commander is installed
 if ! command -v matrix-commander &> /dev/null; then
     echo -e "${YELLOW}Installing matrix-commander...${NC}"
-    pipx install matrix-commander
+    uv tool install matrix-commander
 fi
 
 # Create output directory for credentials
