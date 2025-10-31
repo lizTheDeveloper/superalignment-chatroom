@@ -36,3 +36,7 @@ node_modules/
 matrix-credentials/
 matrix-credentials.json
 *.token
+
+# Redaction directories (processed conversation files)
+conversations/sanitized/
+conversations/raw/

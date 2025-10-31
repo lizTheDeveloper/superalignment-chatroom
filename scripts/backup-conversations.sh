@@ -134,8 +134,33 @@ fi
 if [ "$REDACT" = true ]; then
     echo ""
     echo -e "${BLUE}=== Running Redaction ===${NC}"
-    echo -e "${YELLOW}⚠ Redaction not yet implemented in new location${NC}"
-    echo "  TODO: Update redaction script for new repo structure"
+
+    # Get script directory
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+    # Check if Python is available
+    if ! command -v python3 &> /dev/null; then
+        echo -e "${RED}❌ Python3 not found${NC}"
+        echo "  Install Python3 to use redaction"
+        exit 1
+    fi
+
+    # Check if presidio is installed (optional, script falls back to regex)
+    if ! python3 -c "import presidio_analyzer" 2>/dev/null; then
+        echo -e "${YELLOW}⚠️  Presidio not installed, using regex-only mode${NC}"
+        echo "  For better detection: bash $SCRIPT_DIR/install-redaction-deps.sh"
+        echo ""
+    fi
+
+    # Run redaction script
+    python3 "$SCRIPT_DIR/redact-conversations.py"
+
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Redaction complete${NC}"
+    else
+        echo -e "${RED}❌ Redaction failed${NC}"
+        exit 1
+    fi
 fi
 
 echo ""
