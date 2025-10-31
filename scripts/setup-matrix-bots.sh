@@ -86,21 +86,44 @@ declare -A TOKENS
 for agent in "${AGENTS[@]}"; do
     echo -e "${YELLOW}Creating account: @${agent}:themultiverse.school${NC}"
 
-    # Build auth object based on whether token is provided
-    if [ -n "$REGISTRATION_TOKEN" ]; then
-        AUTH_JSON="{\"type\": \"m.login.registration_token\", \"token\": \"${REGISTRATION_TOKEN}\"}"
-    else
-        AUTH_JSON="{\"type\": \"m.login.dummy\"}"
-    fi
-
-    # Try to register via API
-    REGISTER_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
+    # Step 1: Start UIA flow (get session)
+    INIT_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
         -H "Content-Type: application/json" \
         -d "{
             \"username\": \"${agent}\",
-            \"password\": \"${BOT_PASSWORD}\",
-            \"auth\": ${AUTH_JSON}
+            \"password\": \"${BOT_PASSWORD}\"
         }")
+
+    # Extract session ID
+    SESSION=$(echo "$INIT_RESPONSE" | jq -r '.session // empty')
+
+    if [ -z "$SESSION" ]; then
+        # No session means it might have succeeded immediately or failed
+        if echo "$INIT_RESPONSE" | grep -q "access_token"; then
+            TOKEN=$(echo "$INIT_RESPONSE" | jq -r '.access_token')
+            TOKENS[$agent]=$TOKEN
+            echo -e "${GREEN}✓ Created @${agent}:themultiverse.school${NC}"
+            echo ""
+            continue
+        fi
+    fi
+
+    # Step 2: Complete registration token auth stage
+    if [ -n "$REGISTRATION_TOKEN" ] && [ -n "$SESSION" ]; then
+        REGISTER_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"username\": \"${agent}\",
+                \"password\": \"${BOT_PASSWORD}\",
+                \"auth\": {
+                    \"type\": \"m.login.registration_token\",
+                    \"token\": \"${REGISTRATION_TOKEN}\",
+                    \"session\": \"${SESSION}\"
+                }
+            }")
+    else
+        REGISTER_RESPONSE="$INIT_RESPONSE"
+    fi
 
     # Check if registration succeeded
     if echo "$REGISTER_RESPONSE" | grep -q "access_token"; then
