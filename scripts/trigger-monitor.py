@@ -59,17 +59,22 @@ AGENT_DELAYS = {
     "orchestrator": 40  # Orchestrator last to coordinate
 }
 
-# Agent MCP config paths
+# Agent MCP config paths (relative to script location)
+def get_mcp_config_path(config_name: str) -> str:
+    """Get absolute path to MCP config file."""
+    base_dir = Path(__file__).parent.parent
+    return str(base_dir / ".claude" / "agents" / "mcp-configs" / config_name)
+
 AGENT_MCP_CONFIGS = {
-    "sylvia": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/matrix.mcp.json",
-    "roy": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/matrix.mcp.json",
-    "cynthia": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/matrix.mcp.json",
-    "moss": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/minimal.mcp.json",
-    "tessa": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/minimal.mcp.json",
-    "historian": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/full.mcp.json",
-    "architect": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/full.mcp.json",
-    "ray": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/matrix.mcp.json",
-    "orchestrator": "/Users/annhoward/src/superalignment-chatroom/.claude/agents/mcp-configs/full.mcp.json",
+    "sylvia": get_mcp_config_path("matrix.mcp.json"),
+    "roy": get_mcp_config_path("matrix.mcp.json"),
+    "cynthia": get_mcp_config_path("matrix.mcp.json"),
+    "moss": get_mcp_config_path("minimal.mcp.json"),
+    "tessa": get_mcp_config_path("minimal.mcp.json"),
+    "historian": get_mcp_config_path("full.mcp.json"),
+    "architect": get_mcp_config_path("full.mcp.json"),
+    "ray": get_mcp_config_path("matrix.mcp.json"),
+    "orchestrator": get_mcp_config_path("full.mcp.json"),
 }
 
 def load_state() -> Dict:
