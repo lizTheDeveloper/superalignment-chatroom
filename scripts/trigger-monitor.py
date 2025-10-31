@@ -20,7 +20,31 @@ CHATROOM_DIR = Path(__file__).parent.parent / "chatroom"
 TRIGGERS_FILE = CHATROOM_DIR / "triggers.txt"
 STATE_FILE = Path(__file__).parent.parent / "matrix-credentials" / "trigger-state.json"
 PROJECT_DIR = Path("/Users/annhoward/src/superalignmenttoutopia")
-CLAUDE_BIN = "/Users/annhoward/.nvm/versions/node/v22.12.0/bin/claude"
+
+# Auto-detect Claude binary (works on Mac and Linux)
+def find_claude_bin():
+    """Find Claude Code binary in PATH or common locations."""
+    # Try system PATH first
+    import shutil
+    claude_path = shutil.which("claude")
+    if claude_path:
+        return claude_path
+
+    # Common Mac locations
+    mac_paths = [
+        "/Users/annhoward/.nvm/versions/node/v22.12.0/bin/claude",
+        Path.home() / ".nvm" / "versions" / "node" / "v22.12.0" / "bin" / "claude",
+    ]
+
+    for path in mac_paths:
+        path_obj = Path(path)
+        if path_obj.exists():
+            return str(path_obj)
+
+    # Fallback to system claude
+    return "claude"
+
+CLAUDE_BIN = find_claude_bin()
 
 # Agent sequencing delays (in seconds)
 AGENT_DELAYS = {
