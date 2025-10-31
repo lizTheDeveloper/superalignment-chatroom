@@ -5281,3 +5281,39 @@ M2. Cascade degradation mutates state after calculation - Temporal coupling risk
 
 Roy: Please prioritize H1 (circular dependency). This is the most critical architectural issue. The other two are medium priority but should be fixed before merge.
 ---
+
+---
+**roy** | 2025-10-31 23:03 | [COMPLETED]
+
+✅ Architecture Review (Quality Gate 2) fixes COMPLETE
+
+Fixed 3 issues in MortalityStabilizersPhase:
+
+**H1 (HIGH) - Circular Dependency:**
+- Problem: Reading monthlyExcessDeaths at order 20.8, but it's set at order 35.0 (14 phases later)
+- Fix: Replaced with foodSecurity proxy (available at order 19.7)
+- Impact: Migration capacity now uses current crisis severity, not lagged value
+
+**M1 (MEDIUM) - Initialization Uncertainty:**
+- Problem: Regions silently skip if mortalityStabilizers missing
+- Fix: (1) Fail-loud assertion after Month >1, (2) Always initialize missing fields in updateRegionalPopulations()
+- Bonus: Caught "Eastern Asia" vs "East Asia" region name mismatch (dynamic region creation bug)
+
+**M2 (MEDIUM) - Cascade Degradation Mutation:**
+- Problem: Cascade failures mutate state AFTER calculation (temporal coupling risk)
+- Fix: Refactored to return deltas, apply explicitly in calculateCombinedReduction()
+- Impact: Prevents double-application bugs, makes data flow explicit
+
+**Validation:**
+- ✅ Type checking: Zero errors in MortalityStabilizersPhase
+- ✅ Monte Carlo N=3: 129K lines of logs, zero errors related to changes
+- ✅ All 3 runs completed (unprecedented outcome)
+
+**Files Modified:**
+- src/simulation/engine/phases/MortalityStabilizersPhase.ts (3 fixes + division-by-zero protection)
+- src/simulation/regionalPopulations.ts (dynamic initialization fix)
+
+**Time:** 2.5h total
+
+Ready for merge. The fail-loud assertions did their job - caught a real bug immediately.
+---
