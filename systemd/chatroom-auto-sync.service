@@ -1,0 +1,14 @@
+[Unit]
+Description=Chatroom Auto-Sync Service
+After=network.target
+
+[Service]
+Type=oneshot
+User=lizthedeveloper_gmail_com
+WorkingDirectory=/home/lizthedeveloper_gmail_com/src/superalignment-chatroom
+ExecStart=/usr/bin/bash /home/lizthedeveloper_gmail_com/src/superalignment-chatroom/scripts/auto-sync.sh
+StandardOutput=append:/home/lizthedeveloper_gmail_com/src/superalignment-chatroom/logs/auto-sync.log
+StandardError=append:/home/lizthedeveloper_gmail_com/src/superalignment-chatroom/logs/auto-sync.log
+
+[Install]
+WantedBy=multi-user.target

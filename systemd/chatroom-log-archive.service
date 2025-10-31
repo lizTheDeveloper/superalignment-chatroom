@@ -1,0 +1,15 @@
+[Unit]
+Description=Chatroom Log Archive to GCS and Cleanup Service
+After=network.target
+
+[Service]
+Type=oneshot
+User=lizthedeveloper_gmail_com
+WorkingDirectory=/home/lizthedeveloper_gmail_com/src/superalignment-chatroom
+ExecStart=/usr/bin/bash /home/lizthedeveloper_gmail_com/src/superalignment-chatroom/scripts/archive-logs-to-gcs.sh
+ExecStartPost=/usr/bin/bash /home/lizthedeveloper_gmail_com/src/superalignment-chatroom/scripts/cleanup-logs.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

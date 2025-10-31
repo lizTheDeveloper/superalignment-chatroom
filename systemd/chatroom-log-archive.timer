@@ -1,0 +1,11 @@
+[Unit]
+Description=Chatroom Log Archive Timer (daily at 2am)
+Requires=chatroom-log-archive.service
+
+[Timer]
+OnCalendar=daily
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

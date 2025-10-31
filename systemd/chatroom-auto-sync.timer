@@ -1,0 +1,11 @@
+[Unit]
+Description=Chatroom Auto-Sync Timer (every 5 minutes)
+Requires=chatroom-auto-sync.service
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target
