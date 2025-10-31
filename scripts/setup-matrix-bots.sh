@@ -110,7 +110,7 @@ for agent in "${AGENTS[@]}"; do
 
     # Step 2: Complete registration token auth stage
     if [ -n "$REGISTRATION_TOKEN" ] && [ -n "$SESSION" ]; then
-        REGISTER_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
+        TOKEN_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
             -H "Content-Type: application/json" \
             -d "{
                 \"username\": \"${agent}\",
@@ -118,6 +118,18 @@ for agent in "${AGENTS[@]}"; do
                 \"auth\": {
                     \"type\": \"m.login.registration_token\",
                     \"token\": \"${REGISTRATION_TOKEN}\",
+                    \"session\": \"${SESSION}\"
+                }
+            }")
+
+        # Step 3: Complete dummy auth stage (required after registration_token)
+        REGISTER_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"username\": \"${agent}\",
+                \"password\": \"${BOT_PASSWORD}\",
+                \"auth\": {
+                    \"type\": \"m.login.dummy\",
                     \"session\": \"${SESSION}\"
                 }
             }")
