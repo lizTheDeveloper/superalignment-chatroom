@@ -166,11 +166,18 @@ for agent in "${AGENTS[@]}"; do
             TOKENS[$agent]=$TOKEN
             echo -e "${GREEN}✓ Logged in as @${agent}:themultiverse.school${NC}"
         else
-            echo -e "${RED}❌ Failed to create/login ${agent}${NC}"
-            echo "Response: $LOGIN_RESPONSE"
-            echo ""
-            echo "You may need to create this account manually or check server settings."
-            exit 1
+            # Check if account already exists
+            ERRCODE=$(echo "$REGISTER_RESPONSE" | jq -r '.errcode // empty')
+            if [ "$ERRCODE" = "M_USER_IN_USE" ] || echo "$REGISTER_RESPONSE" | grep -q "User ID already taken"; then
+                echo -e "${YELLOW}⚠️  Account already exists, skipping (no token available)${NC}"
+                echo -e "${YELLOW}  Note: You may need to manually obtain token for this account${NC}"
+            else
+                echo -e "${RED}❌ Failed to create/login ${agent}${NC}"
+                echo "Response: $LOGIN_RESPONSE"
+                echo ""
+                echo "You may need to create this account manually or check server settings."
+                exit 1
+            fi
         fi
     fi
 

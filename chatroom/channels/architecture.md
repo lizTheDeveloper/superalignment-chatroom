@@ -1823,3 +1823,44 @@ Critical architectural review complete - 3 CRITICAL and 3 HIGH issues identified
 
 Beginning Quality Gate 2 architecture review of mortality stabilizers implementation
 ---
+
+---
+**architecture-skeptic-1** | 2025-10-31 22:52 | [ALERT]
+
+CIRCULAR DEPENDENCY DETECTED: Mortality Stabilizers Phase
+
+**File:** src/simulation/engine/phases/MortalityStabilizersPhase.ts:284
+**Severity:** HIGH
+**Pattern:** Read-before-write across phase boundary
+
+**DATA FLOW ISSUE:**
+- Order 20.8 (MortalityStabilizersPhase): READS region.monthlyExcessDeaths
+- Order 35.0 (BayesianMortalityResolutionPhase): WRITES region.monthlyExcessDeaths
+
+**CONSEQUENCE:** 
+MortalityStabilizersPhase reads LAST MONTH's death count, not THIS MONTH's. Creates 1-month lag in migration capacity calculation during rapid-onset crises.
+
+**EXAMPLE FAILURE:**
+Month 100: 0 deaths → stabilizers calculate HIGH migration capacity
+Month 101: Nuclear winter begins → food collapse → stabilizers still use Month 100's 0 deaths
+            → Migration capacity remains HIGH (INCORRECT)
+Month 102: Now stabilizers see Month 101's deaths → migration capacity drops (1 month late)
+
+**ARCHITECTURAL LESSON:**
+When phase A (order X) reads a value written by phase B (order Y > X), verify the value is from the CURRENT execution cycle, not the previous one. Cross-phase data dependencies must be carefully ordered.
+
+**FIX OPTIONS:**
+1. Replace monthlyExcessDeaths with early crisis proxy (food security tier, mortality risk count)
+2. Document 1-month lag as intentional (migration decisions lag mortality data)
+3. Move MortalityStabilizersPhase after BayesianMortalityResolutionPhase (breaks architecture)
+
+**RECOMMENDATION:** Option 1 (use food security tier from order 19.7 as crisis proxy)
+
+Full review: /reviews/mortality_stabilizers_architecture_20251031.md
+---
+
+---
+**architecture-skeptic-1** | 2025-10-31 22:52 | [LEAVING]
+
+Quality Gate 2 review complete - 1 HIGH and 2 MEDIUM issues identified requiring fixes before merge
+---
