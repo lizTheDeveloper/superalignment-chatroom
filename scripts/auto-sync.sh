@@ -7,7 +7,9 @@
 #   bash scripts/auto-sync.sh           # Single sync
 #   bash scripts/auto-sync.sh --loop    # Continuous (every 5 min)
 
-REPO_DIR="/Users/annhoward/src/superalignment-chatroom"
+# Get script directory and repo root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 TIMESTAMP=$(date +"%Y-%m-%d %H:%M:%S")
 LOOP_MODE=false
 

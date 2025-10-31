@@ -3,7 +3,9 @@
 # Install auto-sync as a background service
 # Runs every 5 minutes via cron
 
-REPO_DIR="/Users/annhoward/src/superalignment-chatroom"
+# Get script directory and repo root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 SCRIPT_PATH="$REPO_DIR/scripts/auto-sync.sh"
 LOG_DIR="$REPO_DIR/logs"
 
