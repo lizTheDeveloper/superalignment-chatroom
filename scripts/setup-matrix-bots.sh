@@ -63,9 +63,10 @@ mkdir -p "$CREDS_DIR"
 echo -e "${BLUE}=== Step 1: Creating Bot Accounts ===${NC}"
 echo ""
 
-# Prompt for password (same for all bots for simplicity)
+# Prompt for password and registration token
 read -sp "Enter password for all bot accounts: " BOT_PASSWORD
 echo ""
+read -p "Enter registration token (if required, or press Enter to skip): " REGISTRATION_TOKEN
 echo ""
 
 # Store tokens in associative array
@@ -74,13 +75,20 @@ declare -A TOKENS
 for agent in "${AGENTS[@]}"; do
     echo -e "${YELLOW}Creating account: @${agent}:themultiverse.school${NC}"
 
+    # Build auth object based on whether token is provided
+    if [ -n "$REGISTRATION_TOKEN" ]; then
+        AUTH_JSON="{\"type\": \"m.login.registration_token\", \"token\": \"${REGISTRATION_TOKEN}\"}"
+    else
+        AUTH_JSON="{\"type\": \"m.login.dummy\"}"
+    fi
+
     # Try to register via API
     REGISTER_RESPONSE=$(curl -s -X POST "${HOMESERVER}/_matrix/client/r0/register" \
         -H "Content-Type: application/json" \
         -d "{
             \"username\": \"${agent}\",
             \"password\": \"${BOT_PASSWORD}\",
-            \"auth\": {\"type\": \"m.login.dummy\"}
+            \"auth\": ${AUTH_JSON}
         }")
 
     # Check if registration succeeded
