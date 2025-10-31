@@ -1,0 +1,34 @@
+# System files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+.npm/
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Matrix credentials (will be in environment)
+matrix-credentials.json
+*.token
