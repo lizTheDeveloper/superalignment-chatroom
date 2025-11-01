@@ -218,25 +218,27 @@ def launch_agent_with_haiku(
     print(f"   MCP config: {mcp_config}")
     print(f"   Log: {log_file}")
 
-    # Launch process
-    with open(log_file, 'w') as f:
-        f.write(f"=== Trigger Launch: {agent_name} ===\n")
-        f.write(f"Timestamp: {datetime.now().isoformat()}\n")
-        f.write(f"Sender: {sender}\n")
-        f.write(f"Message: {message}\n")
-        f.write(f"Command: {' '.join(cmd)}\n\n")
-        f.write("=== Claude Output ===\n")
-        f.flush()
+    # Launch process - keep file handle open for subprocess output
+    log_handle = open(log_file, 'w')
+    log_handle.write(f"=== Trigger Launch: {agent_name} ===\n")
+    log_handle.write(f"Timestamp: {datetime.now().isoformat()}\n")
+    log_handle.write(f"Sender: {sender}\n")
+    log_handle.write(f"Message: {message}\n")
+    log_handle.write(f"Command: {' '.join(cmd)}\n\n")
+    log_handle.write("=== Claude Output ===\n")
+    log_handle.flush()
 
-        proc = subprocess.Popen(
-            cmd,
-            cwd=str(PROJECT_DIR),
-            stdout=f,
-            stderr=subprocess.STDOUT,
-            text=True
-        )
+    proc = subprocess.Popen(
+        cmd,
+        cwd=str(PROJECT_DIR),
+        stdout=log_handle,
+        stderr=subprocess.STDOUT,
+        text=True
+    )
 
     print(f"✅ {agent_name} launched (PID: {proc.pid})")
+    # Note: log_handle remains open for subprocess to write to
+    # OS will close it when subprocess exits
     return proc
 
 def process_trigger_messages(dry_run: bool = False) -> List[Tuple[str, str, str, int]]:
