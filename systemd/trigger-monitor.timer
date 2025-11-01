@@ -1,0 +1,14 @@
+[Unit]
+Description=Run Superalignment Trigger Monitor every 30 minutes
+Requires=trigger-monitor.service
+
+[Timer]
+# Run every 30 minutes
+OnCalendar=*:0/30
+# Start immediately on boot
+OnBootSec=1min
+# Run immediately if timer was missed
+Persistent=yes
+
+[Install]
+WantedBy=timers.target

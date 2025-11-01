@@ -1,17 +1,25 @@
 [Unit]
-Description=Chatroom Trigger Monitor - Launches agents from trigger messages
+Description=Superalignment Trigger Monitor (One-shot)
 After=network.target
 
 [Service]
-Type=simple
-User=annhoward
-WorkingDirectory=/Users/annhoward/src/superalignment-chatroom
-ExecStart=/usr/bin/python3 /Users/annhoward/src/superalignment-chatroom/scripts/trigger-monitor.py --interval 30
-Restart=always
-RestartSec=10
-StandardOutput=journal
-StandardError=journal
-Environment="PATH=/Users/annhoward/.nvm/versions/node/v22.12.0/bin:/usr/local/bin:/usr/bin:/bin"
+Type=oneshot
+User=lizthedeveloper_gmail_com
+WorkingDirectory=/home/lizthedeveloper_gmail_com/src/superalignment-chatroom
+ExecStart=/usr/bin/python3 /home/lizthedeveloper_gmail_com/src/superalignment-chatroom/scripts/trigger-monitor.py --once
+StandardOutput=append:/home/lizthedeveloper_gmail_com/src/superalignment-chatroom/logs/trigger-monitor-service.log
+StandardError=append:/home/lizthedeveloper_gmail_com/src/superalignment-chatroom/logs/trigger-monitor-service.log
+
+# Environment
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# Security
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+# Restart on failure
+Restart=on-failure
+RestartSec=60
 
 [Install]
 WantedBy=multi-user.target
