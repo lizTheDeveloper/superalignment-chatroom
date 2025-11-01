@@ -9,6 +9,11 @@
       "command": "python3",
       "args": ["-m", "mcp_agent_memory_server"],
       "cwd": "/home/lizthedeveloper_gmail_com/src/superalignment-chatroom"
+    },
+    "matrix": {
+      "command": "/home/lizthedeveloper_gmail_com/src/superalignment-chatroom/matrix-fastmcp-server/run.sh",
+      "args": [],
+      "env": {}
     }
   }
 }

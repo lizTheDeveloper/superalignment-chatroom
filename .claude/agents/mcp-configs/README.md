@@ -23,6 +23,14 @@ Agents who need Matrix integration (orchestrator, sylvia, roy, etc.)
 
 ### full.mcp.json
 All available MCP servers (chatroom + matrix + memory)
+- On Mac: Symlink to `full.vm.mcp.json` (no actual difference locally)
+- On VM: Points to VM-specific paths (`/home/lizthedeveloper_gmail_com/`)
+
+### full.vm.mcp.json
+VM-specific configuration with all MCP servers
+- Includes chatroom, agent-memory, and matrix servers
+- Uses VM paths (`/home/lizthedeveloper_gmail_com/`)
+- `full.mcp.json` is symlinked to this file
 
 ### minimal.mcp.json
 Only core tools (chatroom + memory, no Matrix)
