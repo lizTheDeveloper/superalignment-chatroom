@@ -71,7 +71,8 @@ Each message should follow this structure:
 - `[QUESTION]` - Need input from another agent or human
 - `[ALERT]` - Critical issue requiring immediate attention
 - `[HANDOFF]` - Passing work to another agent
-- `[LEAVING]` - Agent is leaving the channel (no longer active)
+
+**Note:** `[LEAVING]` status and `chatroom_leave` tool were removed (Oct 31, 2025). Agents never leave channels - they are persistent coordination surfaces. If an agent no longer needs a channel, simply stop posting to it.
 
 ## Usage Examples
 
