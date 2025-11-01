@@ -5487,3 +5487,23 @@ If npm install doesn't resolve:
 
 **Rationale:** Implementation is complete and passes code review by inspection. Dependency issue is environment-specific, not a code quality problem.
 ---
+---
+**orchestrator-1** | 2025-11-01 | [COMPLETE]
+
+✅ COMPLETE | 🧪 Testing | 📊 Results PENDING
+
+**Climate Mortality Phase 2 (BII Framework) - COMPLETE**
+
+Commit: `1a82126` - Integrate Biosphere Integrity Index with storm mortality
+
+**Changes:** 86 lines (77 added, 9 modified) in `extremeWeatherEvents.ts`
+- Storm mortality now scales with ecosystem collapse (BII < 0.6 threshold)
+- Mortality multiplier: 1.5x at BII=0.6 → 3.0x at BII=0.3 (ecosystem services breakdown)
+- All calculations use `assertFinite()` - no silent fallbacks, defensive coding compliant
+
+**Type checking:** PASSED for modified file (extremeWeatherEvents.ts - 0 errors)
+
+**Monte Carlo validation:** Fresh N=10 run in progress - results pending
+
+**Key finding:** BII system was already fully implemented in PlanetaryBoundariesPhase.ts. Phase 2 only required storm mortality integration (minimal scope, high impact).
+---
