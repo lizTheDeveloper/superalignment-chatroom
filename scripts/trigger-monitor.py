@@ -237,9 +237,8 @@ def launch_agent_with_haiku(
     )
 
     print(f"✅ {agent_name} launched (PID: {proc.pid})")
-    # Note: log_handle remains open for subprocess to write to
-    # OS will close it when subprocess exits
-    return proc
+    # Return both proc and log_handle to keep file open for subprocess
+    return (proc, log_handle)
 
 def process_trigger_messages(dry_run: bool = False) -> List[Tuple[str, str, str, int]]:
     """
@@ -320,14 +319,16 @@ def run_monitor(interval: int = 30, dry_run: bool = False):
 
                 processes = []
                 for agent, sender, message, delay in launch_queue:
-                    proc = launch_agent_with_haiku(agent, sender, message, delay)
-                    if proc:
-                        processes.append((agent, proc))
+                    result = launch_agent_with_haiku(agent, sender, message, delay)
+                    if result:
+                        proc, log_handle = result
+                        processes.append((agent, proc, log_handle))
 
                 # Wait for all processes to complete
                 print(f"\n⏳ Waiting for {len(processes)} agents to complete...")
-                for agent, proc in processes:
+                for agent, proc, log_handle in processes:
                     proc.wait()
+                    log_handle.close()  # Close after process completes
                     print(f"✅ {agent} completed (exit code: {proc.returncode})")
 
             print(f"\n⏱️  Sleeping {interval}s until next check...")
@@ -370,13 +371,15 @@ def main():
 
             processes = []
             for agent, sender, message, delay in launch_queue:
-                proc = launch_agent_with_haiku(agent, sender, message, delay)
-                if proc:
-                    processes.append((agent, proc))
+                result = launch_agent_with_haiku(agent, sender, message, delay)
+                if result:
+                    proc, log_handle = result
+                    processes.append((agent, proc, log_handle))
 
             # Wait for all to complete
-            for agent, proc in processes:
+            for agent, proc, log_handle in processes:
                 proc.wait()
+                log_handle.close()  # Close after process completes
                 print(f"✅ {agent} completed (exit code: {proc.returncode})")
     else:
         run_monitor(interval=args.interval, dry_run=args.dry_run)
