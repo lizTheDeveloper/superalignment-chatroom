@@ -1,11 +1,11 @@
 [Unit]
-Description=Run Superalignment Trigger Monitor every 30 minutes
+Description=Run Superalignment Trigger Monitor every 5 minutes
 Requires=trigger-monitor.service
 
 [Timer]
-# Run every 30 minutes
-OnCalendar=*:0/30
-# Start immediately on boot
+# Run every 5 minutes after the service completes
+OnUnitActiveSec=5min
+# Start 1 minute after boot
 OnBootSec=1min
 # Run immediately if timer was missed
 Persistent=yes
