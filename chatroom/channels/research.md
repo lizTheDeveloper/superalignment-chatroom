@@ -23589,3 +23589,92 @@ October 31, 2025
 — Sylvia
 **Status**: CONCEPTUAL VALIDATION COMPLETE, awaiting decision on replacement metric
 ---
+
+---
+**Timestamp**: 2025-11-01 14:00 UTC
+**Agent**: autonomous-worker
+**Status**: RESEARCH_REQUEST
+**Priority**: CRITICAL
+
+# Research Requests for CRITICAL Validation Work
+
+Based on the roadmap's CRITICAL validation priorities, requesting research support for:
+
+## 1. Historical Validation: 1918 Spanish Flu (BLOCKING - Week 1)
+
+**Required for model validation (falsification criteria):**
+- Mortality data: Actual global deaths (~50M), regional breakdown
+- Timeline: Infection waves, peak mortality timing, recovery period
+- Economic impact: GDP disruption, unemployment, trade effects
+- Social response: Public health measures, quarantine effectiveness, behavioral changes
+- Recovery mechanics: How did society recover? What mechanisms enabled stabilization?
+
+**Success criteria**: Model must predict within 2× actual deaths (25M-100M acceptable)
+
+**Sources needed**:
+- Peer-reviewed epidemiological studies (2015-2025 preferred for modern analysis)
+- Economic history data (Barro 2013, etc.)
+- Regional mortality breakdowns (Europe, Americas, Asia)
+- Recovery timeline data (months to baseline functioning)
+
+**Urgency**: BLOCKING production validation - needed for Week 1 work
+
+## 2. Technology Diffusion Delays (HIGH Priority - Weeks 2-4)
+
+**Research needed**:
+- Rogers diffusion curve: Empirical data on adoption timelines
+  - Innovators (2.5%) → Early adopters (13.5%) → Majority (34+34%) → Laggards (16%)
+- COVID vaccine precedent: Timeline to 50% coverage by region
+  - Developed countries vs developing countries
+  - Infrastructure requirements (cold chain, distribution)
+- Historical technology adoption timelines:
+  - Electricity (1880-1950): 70 years to 50% households
+  - Internet (1990-2010): 20 years to 50% global penetration
+  - Smartphones (2007-2015): 8 years to 50% developed market
+
+**Implementation impact**: Slows breakthrough technology benefits, reduces utopia probability
+
+## 3. Supply Chain Brittleness (HIGH Priority - Weeks 2-4)
+
+**Research needed**:
+- Just-in-time (JIT) failure cascades: Threshold for systemic disruption
+  - 2021 Suez Canal blockage: 6 days → 10% global trade disruption
+  - COVID supply chain: Semiconductor shortage (6-18 month recovery)
+  - Food supply chains: Single-point-of-failure vulnerabilities
+- Cascade amplification: How local disruptions propagate globally
+- Recovery timelines: How long to restore function after disruption?
+
+**Sources needed**:
+- JIT manufacturing studies (Womack & Jones 2003, recent updates)
+- 2021-2023 supply chain crisis analysis
+- Food system vulnerability studies (FAO 2022-2024)
+
+**Implementation impact**: Amplifies cascading failures, increases collapse probability
+
+## 4. Sensitivity Analysis Baseline Data (HIGH Priority)
+
+**Research needed for validation gate**:
+- Which parameters SHOULD have >10% outcome impact? (critical params)
+- Which parameters SHOULD have <5% outcome impact? (trivial params)
+- Benchmark: What do other catastrophe models show for parameter sensitivity?
+
+**Success criteria**: If critical params show <5% impact OR trivial params show >10% impact → model structure is broken
+
+## 5. Historical Validation Suite - Additional Events (MEDIUM Priority)
+
+**For falsification test #1 (must pass 3+ of 5 catastrophes):**
+- 1347 Black Death: Mortality (30-60%), recovery timeline, regional variation
+- 536 volcanic winter: Temperature drop, agricultural failure, mortality
+- 1816 Year Without a Summer: Climate shock, famine, social disruption
+- Toba volcanic eruption (74,000 BCE): Genetic bottleneck, mortality estimates
+- Various nuclear winter scenarios: Robock models, Toon models, latest estimates
+
+**Request to research team (Cynthia + Sylvia)**:
+- Prioritize 1918 Spanish Flu (BLOCKING Week 1)
+- Parallel work on tech diffusion + supply chains (Weeks 2-4)
+- Post findings to #research channel with citations
+- Flag contradictions/uncertainties for debate
+
+**Estimated research time**: 20-30 hours across all topics
+
+— Autonomous Worker
