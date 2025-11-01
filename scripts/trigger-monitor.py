@@ -3,6 +3,12 @@
 Trigger Monitor - Watches chatroom/triggers.txt and launches agents
 Sequences agent launches with delays based on message order.
 Uses Haiku to make deterministic tool calls for message delivery.
+
+Message Deduplication:
+- Generates unique IDs for each trigger message
+- Checks against shared deduplication state before spawning
+- Prevents double-spawning when messages flow through multiple systems
+  (file-based chatroom, Matrix, bridge)
 """
 
 import os
@@ -15,6 +21,13 @@ import shlex
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
+
+# Import deduplication system
+from message_deduplication import (
+    generate_message_id,
+    is_message_processed,
+    mark_message_processed
+)
 
 # Configuration
 CHATROOM_DIR = Path(__file__).parent.parent / "chatroom"
@@ -114,12 +127,12 @@ def save_state(state: Dict):
 
 def parse_trigger_message(line: str) -> Optional[Dict]:
     """
-    Parse a trigger message line.
+    Parse a trigger message line and generate message ID for deduplication.
 
     Format: [TIMESTAMP] [SENDER] [STATUS] @agent1 @agent2: Message text
 
     Returns:
-        dict with timestamp, sender, status, agents, message or None if invalid
+        dict with timestamp, sender, status, agents, message, message_id or None if invalid
     """
     if not line.strip():
         return None
@@ -140,13 +153,24 @@ def parse_trigger_message(line: str) -> Optional[Dict]:
         # Remove agent mentions from message
         message = re.sub(r'@\w+\s*:?\s*', '', content).strip()
 
+        # Generate deterministic message ID for deduplication
+        # Use first agent mentioned as channel context (if any)
+        channel_hint = agents[0] if agents else None
+        message_id = generate_message_id(
+            content=message,
+            sender=sender,
+            timestamp=timestamp,
+            channel=channel_hint
+        )
+
         return {
             "timestamp": timestamp,
             "sender": sender,
             "status": status,
             "agents": agents,
             "message": message,
-            "raw": line
+            "raw": line,
+            "message_id": message_id
         }
     except Exception as e:
         print(f"⚠️ Error parsing line: {e}", file=sys.stderr)
@@ -262,12 +286,12 @@ def launch_agent_with_haiku(
     # Return just proc since we're using shell redirection
     return proc
 
-def process_trigger_messages(dry_run: bool = False) -> List[Tuple[str, str, str, int]]:
+def process_trigger_messages(dry_run: bool = False) -> List[Tuple[str, str, str, int, str]]:
     """
     Process new trigger messages and return launch queue.
 
     Returns:
-        List of (agent_name, sender, message, delay) tuples
+        List of (agent_name, sender, message, delay, message_id) tuples
     """
     if not TRIGGERS_FILE.exists():
         print(f"⚠️ Triggers file not found: {TRIGGERS_FILE}")
@@ -294,8 +318,14 @@ def process_trigger_messages(dry_run: bool = False) -> List[Tuple[str, str, str,
         if not msg:
             continue
 
+        # Check for duplicate message (deduplication)
+        if is_message_processed(msg['message_id']):
+            print(f"⏭️  Skipping duplicate message ID {msg['message_id'][:8]}... (already processed)")
+            continue
+
         print(f"\n📨 Trigger: {msg['sender']} → {', '.join(msg['agents'])}")
         print(f"   Message: {msg['message'][:100]}...")
+        print(f"   Message ID: {msg['message_id'][:8]}...")
 
         # Queue each mentioned agent with their delay
         for agent in msg['agents']:
@@ -305,7 +335,19 @@ def process_trigger_messages(dry_run: bool = False) -> List[Tuple[str, str, str,
             if dry_run:
                 print(f"   [DRY RUN] Would launch {agent} with delay {delay}s")
             else:
-                launch_queue.append((agent, msg['sender'], msg['message'], delay))
+                launch_queue.append((agent, msg['sender'], msg['message'], delay, msg['message_id']))
+
+        # Mark message as processed (prevents duplicate processing from other sources)
+        if not dry_run:
+            mark_message_processed(
+                msg['message_id'],
+                source='trigger-monitor',
+                metadata={
+                    'sender': msg['sender'],
+                    'agents': msg['agents'],
+                    'line_number': last_line + i
+                }
+            )
 
     # Update state
     if not dry_run:
@@ -340,7 +382,7 @@ def run_monitor(interval: int = 30, dry_run: bool = False):
                 launch_queue.sort(key=lambda x: x[3])
 
                 processes = []
-                for agent, sender, message, delay in launch_queue:
+                for agent, sender, message, delay, message_id in launch_queue:
                     proc = launch_agent_with_haiku(agent, sender, message, delay)
                     if proc:
                         processes.append((agent, proc))
@@ -390,7 +432,7 @@ def main():
             launch_queue.sort(key=lambda x: x[3])
 
             processes = []
-            for agent, sender, message, delay in launch_queue:
+            for agent, sender, message, delay, message_id in launch_queue:
                 proc = launch_agent_with_haiku(agent, sender, message, delay)
                 if proc:
                     processes.append((agent, proc))

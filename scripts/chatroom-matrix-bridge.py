@@ -8,6 +8,12 @@ Features:
 - Posts new messages to corresponding Matrix rooms
 - Optionally syncs Matrix messages back to chatroom files
 - Tracks last sync position per channel
+
+Message Deduplication:
+- Generates unique IDs for each message before syncing
+- Checks against shared deduplication state to prevent loops
+- Skips messages that already have bridge metadata (prevent echo)
+- Prevents double-spawning when trigger-monitor processes same message
 """
 
 import os
@@ -21,6 +27,13 @@ from datetime import datetime
 
 from nio import AsyncClient, RoomMessageText
 from dotenv import load_dotenv
+
+# Import deduplication system
+from message_deduplication import (
+    generate_message_id,
+    is_message_processed,
+    mark_message_processed
+)
 
 # Load environment variables
 env_path = Path.home() / ".superalignment-env"
@@ -141,6 +154,19 @@ async def sync_chatroom_to_matrix(client: AsyncClient, channel: str, room_id: st
         if not msg:
             continue
 
+        # Generate message ID for deduplication
+        message_id = generate_message_id(
+            content=msg['message'],
+            sender=msg['agent'],
+            timestamp=msg['timestamp'],
+            channel=channel
+        )
+
+        # Check if already processed (prevents loops and duplicate spawning)
+        if is_message_processed(message_id):
+            print(f"  ⏭️  Skipping duplicate message ID {message_id[:8]}... (already processed)")
+            continue
+
         # Format message for Matrix
         formatted_msg = f"[{msg['status']}] {msg['message']}"
 
@@ -154,15 +180,28 @@ async def sync_chatroom_to_matrix(client: AsyncClient, channel: str, room_id: st
                     "body": formatted_msg,
                     "formatted_body": f"<strong>{msg['agent']}</strong>: {formatted_msg}",
                     "format": "org.matrix.custom.html",
-                    # Add metadata for bridge identification
+                    # Add metadata for bridge identification and deduplication
                     "uk.half-shot.bridge": {
                         "source": "chatroom-file",
                         "channel": channel,
-                        "agent": msg['agent']
+                        "agent": msg['agent'],
+                        "message_id": message_id
                     }
                 }
             )
             print(f"  ✅ Posted: [{msg['agent']}] {msg['message'][:50]}...")
+            print(f"     Message ID: {message_id[:8]}...")
+
+            # Mark as processed to prevent re-syncing
+            mark_message_processed(
+                message_id,
+                source='chatroom-matrix-bridge',
+                metadata={
+                    'channel': channel,
+                    'agent': msg['agent'],
+                    'direction': 'chatroom->matrix'
+                }
+            )
 
         except Exception as e:
             print(f"  ❌ Error posting message: {e}")
