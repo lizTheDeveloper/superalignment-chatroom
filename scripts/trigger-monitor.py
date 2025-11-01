@@ -11,6 +11,7 @@ import re
 import json
 import time
 import subprocess
+import shlex
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
@@ -211,13 +212,14 @@ def launch_agent_with_haiku(
         f.write("=== Claude Output ===\n\n")
 
     # Build command with shell redirection (matches manual test that worked)
+    # Use shlex.quote() for proper shell escaping (preserves newlines)
     cmd = (
-        f'cd {PROJECT_DIR} && '
-        f'{CLAUDE_BIN} --print --dangerously-skip-permissions '
+        f'cd {shlex.quote(str(PROJECT_DIR))} && '
+        f'{shlex.quote(CLAUDE_BIN)} --print --dangerously-skip-permissions '
         f'--model haiku --output-format json '
-        f'--mcp-config {mcp_config} --strict-mcp-config '
-        f'{repr(prompt)} '
-        f'>> {log_file} 2>&1'
+        f'--mcp-config {shlex.quote(mcp_config)} --strict-mcp-config '
+        f'{shlex.quote(prompt)} '
+        f'>> {shlex.quote(str(log_file))} 2>&1'
     )
 
     print(f"🚀 Launching {agent_name} (Haiku, skip-permissions)")
