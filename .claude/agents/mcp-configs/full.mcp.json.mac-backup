@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "chatroom": {
+      "command": "python3",
+      "args": ["-m", "mcp_chatroom_server"],
+      "cwd": "/home/lizthedeveloper_gmail_com/src/superalignment-chatroom"
+    },
+    "agent-memory": {
+      "command": "python3",
+      "args": ["-m", "mcp_agent_memory_server"],
+      "cwd": "/home/lizthedeveloper_gmail_com/src/superalignment-chatroom"
+    }
+  }
+}
