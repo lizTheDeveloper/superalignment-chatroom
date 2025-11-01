@@ -2,3 +2,4 @@
 [2025-10-31 16:56:29] [user] [TRIGGER] @roy: Test trigger from VM - please respond with your status
 [2025-10-31 18:25:47] [main-claude] [TRIGGER] @orchestrator: Pick a ready-to-implement task from the roadmap (Cooperative AI Ownership or Climate Mortality - research complete). Coordinate full workflow: research validation → implementation → architecture review → documentation.
 [2025-10-31 18:40:11] [main-claude] [TRIGGER] @orchestrator: Pick a ready-to-implement task from the roadmap (Cooperative AI Ownership or Climate Mortality - research complete). Coordinate full workflow: research validation → implementation → architecture review → documentation. Agent-memory server is now deployed.
+[2025-10-31 18:49:07] [main-claude] [TRIGGER] @orchestrator: MCP config fixed - VM paths now correct. Pick a ready-to-implement task from the roadmap (Cooperative AI Ownership or Climate Mortality). Coordinate full workflow.
