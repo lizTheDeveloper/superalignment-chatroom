@@ -198,47 +198,41 @@ def launch_agent_with_haiku(
     # Create the prompt for Haiku to deliver
     prompt = create_agent_prompt(agent_name, sender, message)
 
-    # Build claude command with Haiku for deterministic tool call
-    cmd = [
-        CLAUDE_BIN,
-        "--print",  # Headless mode
-        "--dangerously-skip-permissions",  # Skip all permissions
-        "--model", "haiku",  # Use Haiku for cost efficiency
-        "--output-format", "json",  # Deterministic JSON output
-        "--mcp-config", mcp_config,  # Agent-specific MCP config
-        "--strict-mcp-config",  # Don't inherit main config
-        prompt
-    ]
-
     # Log launch
     log_file = Path(__file__).parent.parent / "logs" / f"trigger_{agent_name}_{int(time.time())}.log"
     log_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Write header to log file
+    with open(log_file, 'w') as f:
+        f.write(f"=== Trigger Launch: {agent_name} ===\n")
+        f.write(f"Timestamp: {datetime.now().isoformat()}\n")
+        f.write(f"Sender: {sender}\n")
+        f.write(f"Message: {message}\n\n")
+        f.write("=== Claude Output ===\n\n")
+
+    # Build command with shell redirection (matches manual test that worked)
+    cmd = (
+        f'cd {PROJECT_DIR} && '
+        f'{CLAUDE_BIN} --print --dangerously-skip-permissions '
+        f'--model haiku --output-format json '
+        f'--mcp-config {mcp_config} --strict-mcp-config '
+        f'{repr(prompt)} '
+        f'>> {log_file} 2>&1'
+    )
 
     print(f"🚀 Launching {agent_name} (Haiku, skip-permissions)")
     print(f"   MCP config: {mcp_config}")
     print(f"   Log: {log_file}")
 
-    # Launch process - keep file handle open for subprocess output
-    log_handle = open(log_file, 'w')
-    log_handle.write(f"=== Trigger Launch: {agent_name} ===\n")
-    log_handle.write(f"Timestamp: {datetime.now().isoformat()}\n")
-    log_handle.write(f"Sender: {sender}\n")
-    log_handle.write(f"Message: {message}\n")
-    log_handle.write(f"Command: {' '.join(cmd)}\n\n")
-    log_handle.write("=== Claude Output ===\n")
-    log_handle.flush()
-
     proc = subprocess.Popen(
         cmd,
-        cwd=str(PROJECT_DIR),
-        stdout=log_handle,
-        stderr=subprocess.STDOUT,
-        text=True
+        shell=True,  # Required for shell redirection
+        cwd=str(PROJECT_DIR)
     )
 
     print(f"✅ {agent_name} launched (PID: {proc.pid})")
-    # Return both proc and log_handle to keep file open for subprocess
-    return (proc, log_handle)
+    # Return just proc since we're using shell redirection
+    return proc
 
 def process_trigger_messages(dry_run: bool = False) -> List[Tuple[str, str, str, int]]:
     """
@@ -319,16 +313,14 @@ def run_monitor(interval: int = 30, dry_run: bool = False):
 
                 processes = []
                 for agent, sender, message, delay in launch_queue:
-                    result = launch_agent_with_haiku(agent, sender, message, delay)
-                    if result:
-                        proc, log_handle = result
-                        processes.append((agent, proc, log_handle))
+                    proc = launch_agent_with_haiku(agent, sender, message, delay)
+                    if proc:
+                        processes.append((agent, proc))
 
                 # Wait for all processes to complete
                 print(f"\n⏳ Waiting for {len(processes)} agents to complete...")
-                for agent, proc, log_handle in processes:
+                for agent, proc in processes:
                     proc.wait()
-                    log_handle.close()  # Close after process completes
                     print(f"✅ {agent} completed (exit code: {proc.returncode})")
 
             print(f"\n⏱️  Sleeping {interval}s until next check...")
@@ -371,15 +363,13 @@ def main():
 
             processes = []
             for agent, sender, message, delay in launch_queue:
-                result = launch_agent_with_haiku(agent, sender, message, delay)
-                if result:
-                    proc, log_handle = result
-                    processes.append((agent, proc, log_handle))
+                proc = launch_agent_with_haiku(agent, sender, message, delay)
+                if proc:
+                    processes.append((agent, proc))
 
             # Wait for all to complete
-            for agent, proc, log_handle in processes:
+            for agent, proc in processes:
                 proc.wait()
-                log_handle.close()  # Close after process completes
                 print(f"✅ {agent} completed (exit code: {proc.returncode})")
     else:
         run_monitor(interval=args.interval, dry_run=args.dry_run)
