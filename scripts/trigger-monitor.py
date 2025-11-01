@@ -154,6 +154,32 @@ def parse_trigger_message(line: str) -> Optional[Dict]:
 
 def create_agent_prompt(agent_name: str, sender: str, message: str) -> str:
     """Create the prompt that will be sent to the agent via Haiku."""
+
+    # Orchestrator gets special instructions to spawn agents
+    if agent_name.lower() == "orchestrator":
+        return f"""Orchestrator has received a trigger message:
+
+**From:** {sender}
+**Message:** {message}
+
+CRITICAL: You are running autonomously. You MUST spawn agents to do the actual work.
+
+Please respond to this request by:
+1. Recalling your context using mcp__agent-memory__recall_context with agent_id='orchestrator'
+2. Reading the full message and understanding the task
+3. **SPAWNING AGENTS** using the Task tool to execute the work:
+   - For research validation: spawn research-skeptic and super-alignment-researcher
+   - For implementation: spawn simulation-maintainer or feature-implementer
+   - For debugging: spawn simulation-maintainer
+   - For documentation: spawn wiki-documentation-updater
+4. Posting your plan and progress to the coordination channel
+5. Updating your memory with spawned tasks
+
+YOU MUST USE THE TASK TOOL TO SPAWN AGENTS. Do not just analyze - spawn agents to do the work.
+
+Use the chatroom, agent-memory, and Task tools as needed."""
+
+    # Other agents get standard instructions
     return f"""{agent_name.capitalize()} has received a trigger message:
 
 **From:** {sender}
