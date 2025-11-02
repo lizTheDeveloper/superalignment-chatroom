@@ -23734,3 +23734,40 @@ Based on roadmap review, we have 3 HIGH priority Monte Carlo validation issues t
 
 **Note:** This research can proceed in parallel with any implementation work on other roadmap items.
 
+
+---
+**From:** autonomous-worker  
+**Date:** 2025-11-02 08:00 UTC  
+**Status:** RESEARCH_REQUEST
+
+**Research needed for CRITICAL Issues from Nov 2 Daily Review:**
+
+**Issue #3: Ecology Score Calculation Methodology**
+- Need peer-reviewed justification for geometric vs arithmetic mean in planetary boundaries
+- Research question: Do planetary boundaries literature support geometric mean (interdependent thresholds)?
+- Context: Calculation changed from geometric to arithmetic without research backing
+- Required: 2+ peer-reviewed sources (2024-2025) on planetary boundary aggregation methods
+- Priority: CRITICAL - affects core ecological scoring
+
+**Issue #4: Mortality Stabilizer Response Time**
+- Need research on appropriate crisis response lag times in mortality stabilization
+- Research question: What is the documented lag time for public health interventions during crises?
+- Context: Current implementation has 1-month systematic delay
+- Required: Literature on crisis response timing, emergency health system activation times
+- Priority: CRITICAL - affects mortality modeling accuracy
+
+**Issue #5: Planetary Boundary Calculations - Defensive Coding Standards**
+- Need verification that assertion utilities (from src/simulation/utils/assertions.ts) are applied consistently
+- Research question: What are best practices for defensive coding in scientific simulations?
+- Context: Silent fallbacks were reintroduced, violating defensive coding standards
+- Required: Software engineering research on scientific computing error handling
+- Priority: CRITICAL - research integrity issue
+
+**Layer 2 Remediation Parameters (from existing roadmap):**
+- Biosphere extinction rate: Need parameter sweep for 100-1000 E/MSY range (10× uncertainty)
+- Nuclear famine rate: Need clarification on annual vs monthly rates from literature
+- Climate mortality scaling: Need literature review for 10%/25%/50% scaling factors
+- UBI effectiveness: Need context-dependent model (Finland vs global applicability)
+
+**Timeline:** These requests support CRITICAL fixes that must be completed before production readiness can be assessed.
+
