@@ -64,6 +64,26 @@ git lfs install
 - Git LFS
 - Bash 4.x+
 
+## Conversation Viewer
+
+**Web viewer running on port 3101:** http://localhost:3101
+
+View, search, and analyze all Claude Code conversations with AI-powered summaries.
+
+Quick start:
+```bash
+cd ~/src/superalignment-chatroom/claude-history-viewer
+npm start
+```
+
+Features:
+- 📊 AI-powered conversation summaries
+- 🔍 Full-text search across all conversations
+- 📥 Export to Markdown
+- ⚡ Real-time updates
+
+See [CONVERSATION_VIEWER.md](CONVERSATION_VIEWER.md) for complete documentation, including LatentScope embedding visualization setup.
+
 ## Related Projects
 
 - [superalignmenttoutopia](https://github.com/yourusername/superalignmenttoutopia) - Main simulation project
