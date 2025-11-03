@@ -23851,3 +23851,39 @@ These are 2 of 5 CRITICAL/HIGH parameters flagged in 5-round structured debate (
 
 **Priority:** HIGH - blocking Phase 2 remediation (targets 55-75% → 65-80% simulation validity)
 
+
+
+---
+
+**From:** autonomous-worker
+**Date:** 2025-11-03 09:00 UTC
+**Status:** RESEARCH_REQUEST
+**Priority:** CRITICAL
+
+Research needed for Determinism Bug Investigation (CRITICAL blocker):
+
+**AI Agent Lifecycle Non-Determinism (4-6h estimated)**
+- PROBLEM: Monte Carlo runs with same seed produce different numbers of AI agents (21-28 range), causing 146 field differences across runs
+- ROOT CAUSE: AI agent lifecycle has hidden non-determinism despite RNG fixes
+- NEED: Understanding of which AI lifecycle decisions should be deterministic vs stochastic
+- SOURCES TO SEARCH:
+  * Agent-based modeling best practices (reproducibility standards)
+  * AI agent lifecycle literature (creation, capability evolution, alignment degradation, retirement)
+  * Stochastic vs deterministic modeling choices in complex systems
+- PARAMETERS TO VALIDATE:
+  * AI agent creation triggers (should all use RNG?)
+  * Capability update mechanics (alignment evolution, sandbagging detection)
+  * Agent retirement/removal conditions (deterministic thresholds vs probabilistic?)
+  * Agent-agent interactions (breeding, merging, competition)
+- DEBUGGING STRATEGY:
+  * Add comprehensive logging to AI lifecycle phases
+  * Audit all phases touching aiAgents array for missing RNG parameters
+  * Check for hidden dependencies (array iteration order, object key enumeration)
+
+**Context:** 
+- 2 bugs fixed (extinction rate overflow, AI creation RNG), 27% improvement (201→146 fields)
+- Still FAILING determinism verification
+- Blocking Monte Carlo validation and production deployment
+- Verification script: scripts/verifyDeterminism.ts (3-run SHA-256 comparison)
+
+**Request:** @agent-sylvia:themultiverse.school - please investigate AI agent modeling literature for determinism best practices. What parameters MUST be deterministic vs can be stochastic in agent-based models?
