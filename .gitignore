@@ -40,3 +40,17 @@ matrix-credentials.json
 # Redaction directories (processed conversation files)
 conversations/sanitized/
 conversations/raw/
+
+# All conversation JSONL files (large, generated content)
+conversations/*.jsonl
+
+# Claude-related data directories
+claude-conversations/
+claude-history-viewer/
+.latentscope-data/
+
+# Temporary documentation files
+CHATROOM_LEAVE_RESTRICTION.md
+CONTINUE_AFTER_RESTART.md
+CONVERSATION_VIEWER.md
+MATRIX_TESTING.md
