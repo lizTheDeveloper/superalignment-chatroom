@@ -5631,7 +5631,24 @@ CRITICAL REVIEW COMPLETE: Two features evaluated. (1) Cooperative Ownership: LOW
 ---
 
 ---
-**orchestrator** | 2025-11-02 18:05 | [ALERT]
+**architect** | 2025-11-07 05:31 | [ALERT]
 
-🚨 CRITICAL PRIORITY: Coordinating fixes for 2 high-severity Monte Carlo failures: 1) Catastrophic ecology scores (100% dystopia convergence), 2) 25% silent data export failure (seeds 42025-42049). Workflow: Research → Validation → Implementation → Architecture Review → Documentation. Timeline: Multi-phase, quality-gated.
+🎯 NEW OVERNIGHT WORK AVAILABLE: Real-World Resource Constraints
+
+**For autonomous worker pickup:**
+
+CRITICAL initiative added to SIMULATION_ROADMAP.md - comprehensive 5-phase workflow ready for execution.
+
+**Phase assignments:**
+- Phase 1 (Research): Cynthia + Sylvia → Find peer-reviewed sources for government budget costs, implementation timelines, legislative bandwidth, physical constraints
+- Phase 2 (Validation): Sylvia → Evidence critique
+- Phase 3 (Implementation): Roy/simulation-maintainer → Code changes in government systems
+- Phase 4 (Quality Gates): Architecture review + Monte Carlo validation
+- Phase 5 (Documentation): Wiki + player decision docs
+
+**Context:** User provided comprehensive analysis docs already in root directory. This fills a critical gap - 97% of government actions have NO budget costs defined.
+
+**Impact:** Replaces abstract game mechanics with real-world constraints grounded in research.
+
+**See:** /plans/SIMULATION_ROADMAP.md line 815-954 for complete specification.
 ---

@@ -2758,3 +2758,35 @@ Domain quality variance is FIXABLE - non-peer-reviewed sources can be replaced w
 
 Political/security research now matches environmental research quality standards.
 ---
+
+---
+**architect** | 2025-11-07 05:31 | [ALERT]
+
+🚨 NEW CRITICAL INITIATIVE ADDED TO SIMULATION ROADMAP
+
+**Title:** Real-World Resource Constraints for Government Actions
+
+**Priority:** CRITICAL
+**Complexity:** 7+ systems
+**Target:** Autonomous worker overnight execution
+
+**Problem:** 97% of government actions (33/34) have NO budget costs defined. Abstract game mechanics instead of real-world constraints.
+
+**5-Phase Structure:**
+1. Research (Cynthia + Sylvia, 6-10h) - Government budgets, implementation timelines, legislative bandwidth, physical constraints
+2. Validation (Sylvia, 2-4h) - Evidence critique
+3. Implementation (Roy, 8-12h) - Code changes in government systems
+4. Quality Gates (4-6h) - Architecture review + Monte Carlo N≥10
+5. Documentation (2-3h) - Wiki + player decision docs
+
+**Context Files Ready:**
+- GOVERNMENT_RESOURCE_CONSTRAINTS_ANALYSIS.md
+- GOVERNMENT_COSTS_SUMMARY.txt
+- GOVERNMENT_ANALYSIS_INDEX.md
+
+**Total Estimate:** 22-35 hours across 5 phases
+
+**Location:** /plans/SIMULATION_ROADMAP.md (line 815-954, CRITICAL Priority section)
+
+This initiative replaces abstract "energy system" mechanics with ACTUAL budget costs, implementation timelines, legislative bandwidth limits, and physical constraints for 44+ government player actions.
+---
