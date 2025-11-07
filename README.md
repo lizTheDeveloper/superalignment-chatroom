@@ -64,25 +64,74 @@ git lfs install
 - Git LFS
 - Bash 4.x+
 
-## Conversation Viewer
+## Conversation Viewers
 
-**Web viewer running on port 3101:** http://localhost:3101
+### Quick Access
 
-View, search, and analyze all Claude Code conversations with AI-powered summaries.
+| Viewer | Port | URL | Status |
+|--------|------|-----|--------|
+| **Data-Integrities** | 3101 | http://localhost:3101 | ✅ Running |
+| **Linda Viewer** | 3102 | http://localhost:3102 | ✅ Running |
+| **LatentScope** | 5004 | http://localhost:5004 | ✅ Running |
 
-Quick start:
+**Data:** 2,198 conversations (1.7GB)
+
+### Data-Integrities Viewer (Primary)
+
+Server-side viewer that automatically loads all conversations:
+
 ```bash
 cd ~/src/superalignment-chatroom/claude-history-viewer
 npm start
 ```
 
-Features:
-- 📊 AI-powered conversation summaries
-- 🔍 Full-text search across all conversations
-- 📥 Export to Markdown
-- ⚡ Real-time updates
+Visit http://localhost:3101 to browse 2,060+ conversations with full-text search and markdown export.
 
-See [CONVERSATION_VIEWER.md](CONVERSATION_VIEWER.md) for complete documentation, including LatentScope embedding visualization setup.
+### Linda Viewer (Alternative)
+
+Drag & drop client-side viewer:
+
+```bash
+cd /tmp/linda-viewer
+PORT=3102 npm run dev
+```
+
+Visit http://localhost:3102 and drag JSONL files. **Hosted version:** https://jsonl.withlinda.dev
+
+### LatentScope
+
+Interactive embedding visualization for exploring conversation clusters:
+
+```bash
+cd ~/src/superalignment-chatroom
+./start_latentscope.sh > logs/latentscope.log 2>&1 &
+```
+
+Visit http://localhost:5004 for UMAP projections, clustering, and semantic exploration.
+
+**Features:**
+- 🔍 **Semantic search** across conversation embeddings
+- 📊 **UMAP projection** - 2D visualization
+- 🎯 **HDBSCAN clustering** - Identify conversation groups
+- 🚀 **Local embeddings** - QWEN3-Embedding-0.6B (no API keys)
+
+**Status:** ⚠️ **INCOMPLETE - NEEDS RE-RUN** (Nov 5, 2025)
+- ✅ 2,198 conversations chunked → 30,472 chunks (173MB)
+- ✅ Chunks ingested to LatentScope (75MB parquet)
+- ❌ QWEN3 embedding batch incomplete (518/7,618 batches = 6.8%)
+- ❌ UMAP/clustering not started (requires embeddings)
+- 📝 Test dataset exists (98 files, wrong model - for development only)
+
+**To Complete:**
+```bash
+cd ~/src/superalignment-chatroom
+source latentscope-venv/bin/activate
+export LATENT_SCOPE_DATA=~/.latentscope-data
+bash scripts/batch_process_all.sh > logs/batch_process_$(date +%Y%m%d_%H%M%S).log 2>&1 &
+# Will take ~8-10 hours
+```
+
+See [CONVERSATION_VIEWER.md](CONVERSATION_VIEWER.md) for complete documentation.
 
 ## Related Projects
 

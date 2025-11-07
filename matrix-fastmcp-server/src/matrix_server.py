@@ -32,6 +32,7 @@ HOMESERVER = os.getenv("MATRIX_HOMESERVER", "https://matrix.themultiverse.school
 
 # Bot token mapping
 BOT_TOKENS = {
+    "aetherix": os.getenv("MATRIX_TOKEN_AETHERIX", ""),
     "orchestrator": os.getenv("MATRIX_TOKEN_ORCHESTRATOR", ""),
     "sylvia": os.getenv("MATRIX_TOKEN_SYLVIA", ""),
     "roy": os.getenv("MATRIX_TOKEN_ROY", ""),
